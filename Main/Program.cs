@@ -18,6 +18,7 @@ namespace TLS.Main
             IHostBuilder builder = Host.CreateDefaultBuilder(args);
 
             builder.ConfigureHostConfiguration(config => {
+                config.SetBasePath(Environment.CurrentDirectory);
                 config.AddCommandLine(args);
                 config.AddJsonFile("config.json", true);
             });
