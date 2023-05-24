@@ -8,7 +8,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace TLS.Services
+namespace TLS.Main
 {
     public class ClientWrapperService : IHostedService
     {

@@ -8,11 +8,10 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TLS.Services;
 
-namespace TLS
+namespace TLS.Main
 {
-    public static class Startup
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
@@ -24,6 +23,7 @@ namespace TLS
             });
 
             builder.ConfigureServices(services => {
+                services.AddSingleton<AuditDB>();
                 services.AddSingleton<DiscordSocketClient>();
                 services.AddSingleton<InteractionService>();
                 services.AddHostedService<InteractionWrapperService>();

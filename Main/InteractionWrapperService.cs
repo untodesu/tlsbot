@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
-namespace TLS.Services
+namespace TLS.Main
 {
     public class InteractionWrapperService : IHostedService
     {
@@ -42,27 +42,19 @@ namespace TLS.Services
 
         private async Task OnClientReadyAsync()
         {
-            #if DEBUG
-                await m_interactions.RegisterCommandsToGuildAsync(m_config.GetValue<ulong>("client.debug_guild"), true);
-            #else
-                await m_interactions.RegisterCommandsGloballyAsync(true);
-            #endif
+            // We only work in one guilds which id is set in audit.guild
+            await m_interactions.RegisterCommandsToGuildAsync(m_config.GetValue<ulong>("audit.guild"), true);
         }
 
         private async Task OnClientInteractionAsync(SocketInteraction interaction)
         {
             try {
                 SocketInteractionContext context = new SocketInteractionContext(m_client, interaction);
-                IResult result = await m_interactions.ExecuteCommandAsync(context, m_services);
-
-                if(!result.IsSuccess) {
-                    // FIXME: maybe do this only when DEBUG is set?
-                    await interaction.RespondAsync(result.ToString());
-                }
+                await m_interactions.ExecuteCommandAsync(context, m_services);
             }
             catch {
                 if(interaction.Type == InteractionType.ApplicationCommand) {
-                    await interaction.GetOriginalResponseAsync().ContinueWith(msg => msg.Result.DeleteAsync());
+                    await interaction.GetOriginalResponseAsync().ContinueWith(async msg => await msg.Result.DeleteAsync());
                 }
             }
         }
